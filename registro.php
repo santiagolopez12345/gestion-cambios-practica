@@ -1,14 +1,24 @@
 <?php
 
-$conn = mysqli_connect("localhost","root","","biblioteca");
+try {
 
-$user = $_POST['user'];
-$pass = $_POST['pass'];
+$pdo = new PDO("mysql:host=localhost;dbname=biblioteca","root","");
 
-$query = "INSERT INTO usuarios VALUES ('$user','$pass')";
+$user = trim($_POST['user']);
+$pass = password_hash($_POST['pass'], PASSWORD_DEFAULT);
 
-mysqli_query($conn,$query);
+$stmt = $pdo->prepare(
+"INSERT INTO usuarios(usuario,password)
+VALUES(?,?)"
+);
+
+$stmt->execute([$user,$pass]);
 
 echo "Usuario registrado";
 
+} catch(PDOException $e){
+echo "Error: ".$e->getMessage();
+}
+
 ?>
+
